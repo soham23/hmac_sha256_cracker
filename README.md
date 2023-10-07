@@ -1,6 +1,6 @@
 # HMAC-SHA256 Cracker
 
-This tool can be used to crack secret keys that have been used to sign long messages with HMAC-SHA256 algorithms.
+This tool can be used to crack secret keys that have been used to sign long messages with HMAC-SHA256 algorithm.
 
 ### Can't I just use hashcat?
 Yes. In fact if your message is shorter than 51 bytes, I'd recommend using hashcat since it's a tried & tested tool. However, hashcat won't accept messages longer than 51 bytes.
