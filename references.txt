@@ -1,0 +1,6 @@
+https://docs.python.org/3/howto/argparse.html
+https://www.w3schools.com/python/python_regex.asp
+https://dillinger.io/
+https://simpledev.io/lesson/task-list-md-1/
+https://www.digitalocean.com/community/tutorials/markdown-markdown-images
+https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github
