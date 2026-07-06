@@ -107,7 +107,7 @@ Hash Cracked!!! Secret -> secret
 
 ## Screenshot
 
-![Terminal Demo](screenshots/terminal-demo.png)
+![Terminal Demo](https://raw.githubusercontent.com/soham23/hmac_sha256_cracker/refs/heads/master/screenshots/terminal-demo.png)
 
 ---
 
