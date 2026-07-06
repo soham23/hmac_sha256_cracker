@@ -1,4 +1,4 @@
-<img width="1895" height="126" alt="image" src="https://github.com/user-attachments/assets/7dd853f5-3147-49a4-bcc8-665b9c321774" /># HMAC-SHA256 Secret Recovery Tool
+# HMAC-SHA256 Secret Recovery Tool
 
 A lightweight Python command-line tool for recovering HMAC-SHA256 secrets using a dictionary attack when the plaintext message and HMAC digest are known.
 
