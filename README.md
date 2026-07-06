@@ -43,7 +43,7 @@ This project is **not** intended to replace Hashcat. Instead, it provides a simp
 ### Clone the repository
 
 ```bash
-git clone https://github.com/<username>/hmac_sha256_cracker.git
+git clone https://github.com/soham23/hmac_sha256_cracker.git
 cd hmac_sha256_cracker
 ```
 
