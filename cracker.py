@@ -1,62 +1,95 @@
-#!/bin/python3
-from hmac import new
-from hashlib import sha256
+#!/usr/bin/env python3
+
 import argparse
-import re
 import os
+import re
+from hashlib import sha256
+from hmac import new
 
 ## Functions
 
-def generate_digest(secret_key, message):
-	digest = new(bytes(secret_key, "utf-8"), bytes(message, "utf-8"), sha256).hexdigest()
-	return str(digest)
+def generate_digest(secret_key: str, message: str) -> str:
+    """
+    Generate an HMAC-SHA256 digest using the supplied secret key and message.
+    """
+    return new(
+        secret_key.encode("utf-8"),
+        message.encode("utf-8"),
+        sha256,
+    ).hexdigest()
 
-def generate_wordlist(file_name):
-	f = open(file_name, "r")
-	lines = f.readlines()
-	f.close()
-	wordlist = [x.strip() for x in lines]
-	return wordlist
+def generate_wordlist(file_name: str) -> list[str]:
+    """
+    Read a wordlist file and return a list of candidate secrets.
+    """
+    with open(file_name, "r", encoding="utf-8") as file:
+        return [line.strip() for line in file]
 
-def assert_digest(digest):
-	if(len(digest) != 64):
-		print(f"Invalid sha256 digest -> {digest}")
-		exit()
-	if(re.findall('^[a-z0-9]+$', digest) == []):
-		print(f"Invalid sha256 digest -> {digest}")
-		exit()
+def validate_digest(digest: str) -> None:
+    """
+    Validate that the supplied digest is a valid SHA-256 hexadecimal string.
+    """
+    if len(digest) != 64:
+        raise ValueError(f"Invalid SHA-256 digest: {digest}")
 
-def assert_wordlist(file_name):
-	if(not os.path.isfile(file_name)):
-		print(f"Invalid file or file doesn't exist -> {file_name}")
-		exit()
+    if not re.fullmatch(r"[a-f0-9]{64}", digest):
+        raise ValueError(f"Invalid SHA-256 digest: {digest}")
 
-def brute_secret(wordlist, message, digest):
-	for word in wordlist:
-		cur_digest = generate_digest(word, message)
-		if(cur_digest == digest):
-			return word
-	return None
+def validate_wordlist(file_name: str) -> None:
+    """
+    Ensure that the supplied wordlist file exists.
+    """
+    if not os.path.isfile(file_name):
+        raise FileNotFoundError(f"Wordlist file does not exist: {file_name}")
 
-## Parse Command-Line Arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("hash", help="Digest or hash you want to crack")
-parser.add_argument("message", help="Plaintext message that has been signed using HMAC-SHA256")
-parser.add_argument("wordlist", help="Wordlist file you want to use to brute-force the secret")
+def brute_secret(wordlist: list[str], message: str, digest: str) -> str | None:
+    """
+    Attempt to recover the HMAC secret using a dictionary attack.
+    """
+    for word in wordlist:
+        if generate_digest(word, message) == digest:
+            return word
 
-args = parser.parse_args()
-digest = args.hash
-message = args.message
-wordlist_file = args.wordlist
+    return None
 
-## Check if arguments are valid
-assert_digest(digest)
-assert_wordlist(wordlist_file)
+def main() -> None:
+    """
+    Parse command-line arguments and perform the dictionary attack.
+    """
+    parser = argparse.ArgumentParser(
+        description="Recover an HMAC-SHA256 secret using a dictionary attack."
+    )
 
-## Crack the digest
-wordlist = generate_wordlist(wordlist_file)
-secret = brute_secret(wordlist, message, digest)
-if(secret != None):
-	print(f"Hash Cracked!!! Secret -> {secret}")
-else:
-	print("Hash not cracked")
+    parser.add_argument(
+        "hash",
+        help="Target HMAC-SHA256 digest",
+    )
+    parser.add_argument(
+        "message",
+        help="Plaintext message used to generate the digest",
+    )
+    parser.add_argument(
+        "wordlist",
+        help="Path to the dictionary file",
+    )
+
+    args = parser.parse_args()
+
+    try:
+        validate_digest(args.hash)
+        validate_wordlist(args.wordlist)
+
+        wordlist = generate_wordlist(args.wordlist)
+        secret = brute_secret(wordlist, args.message, args.hash)
+
+        if secret:
+            print(f"Hash Cracked!!! Secret -> {secret}")
+        else:
+            print("Hash not cracked")
+
+    except (ValueError, FileNotFoundError) as error:
+        parser.error(str(error))
+
+
+if __name__ == "__main__":
+    main()
