@@ -1,0 +1,3 @@
+python3 cracker.py ee84159421888bdf29e40084524db8e4676e9b42e50394b017976df72e1f1460 "This is a super long message that will be rejected by hashcat because it is way too long." /usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-1000.txt 
+
+Hash Cracked!!! Secret -> secret
